@@ -1,0 +1,30 @@
+name: intervention_app
+description: A Flutter application for handling intervention requests
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.15.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  http: ^0.13.4
+  http_parser: ^4.0.0
+  file_picker: ^8.0.0
+  intl: 0.19.0
+  cupertino_icons: ^1.0.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^1.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+     - assets/icons/gamme_icon.png
+     - assets/icons/state_icon.png
+     - assets/icons/user_icon.png
