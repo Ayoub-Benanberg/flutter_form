@@ -18,13 +18,13 @@ class _CreateInterventionScreenState extends State<CreateInterventionScreen> {
   // Selection values
   String? _selectedMachineStatusId;
   String? _selectedProbNatureId;
-  String? _selectedRisqueId;
+  // String? _selectedRisqueId;
   String? _selectedPriorityId;
   String? _selectedCollaborateurId;
   
   bool _isLoading = false;
 
-  // Example data for dropdowns - In a real app, these would come from your API
+  // Example data for dropdowns
   final List<Map<String, dynamic>> _machineStatuses = [
     {'id': 'status1', 'status': 'État 1'},
     {'id': 'status2', 'status': 'État 2'},
@@ -44,7 +44,7 @@ class _CreateInterventionScreenState extends State<CreateInterventionScreen> {
   ];
 
   // Standard values for this form
-  final String _risqueId = 'standard_risk'; // You would get this from API
+  final String _risqueId = 'standard_risk'; // from API
   final bool _closed = false;
   // We'll use a default machine ID since it's required by the backend but not shown in UI
   final String _defaultMachineId = 'default_machine';
@@ -71,7 +71,7 @@ class _CreateInterventionScreenState extends State<CreateInterventionScreen> {
         // Send to API
         final result = await ApiService().createInterventionRequest(
           intervention,
-          [], // Empty list for documents since we've removed the functionality
+          [],
         );
 
         // Show success message

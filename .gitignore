@@ -33,6 +33,8 @@ migrate_working_dir/
 .pub/
 /build/
 
+/OperatorInterventionRequestController.php
+
 # Symbolication related
 app.*.symbols
 

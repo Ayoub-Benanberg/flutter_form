@@ -5,12 +5,12 @@ import 'package:http_parser/http_parser.dart';
 import '../models/intervention_request.dart';
 
 class ApiService {
-  // Replace with your actual API URL
+  
   final String baseUrl = 'https://your-backend-url.com/api';
 
-  // Get authentication token - in a real app, you'd implement proper auth
+  // Get authentication token
   Future<String> _getToken() async {
-    // Replace with your actual authentication implementation
+    // Replace with authentication
     return 'your_auth_token';
   }
 
@@ -41,7 +41,7 @@ class ApiService {
         final mimeType = _getMimeType(fileName);
         
         request.files.add(await http.MultipartFile.fromPath(
-          'documents[]', // Notice the [] to match PHP expecting an array
+          'documents[]',
           document.path,
           contentType: MediaType.parse(mimeType),
         ));
