@@ -35,7 +35,7 @@ class MyApp extends StatelessWidget {
         Locale('en'),
       ],
       locale: const Locale('fr'),
-      home: const CreateInterventionScreen(),
+      home: const CombinedInterventionForm(),
     );
   }
 }

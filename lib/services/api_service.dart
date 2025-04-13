@@ -1,3 +1,4 @@
+// lib/services/api_service.dart
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
@@ -73,6 +74,16 @@ class ApiService {
         return 'image/jpeg';
       case 'png':
         return 'image/png';
+      case 'mp3':
+        return 'audio/mpeg';
+      case 'm4a':
+        return 'audio/m4a';
+      case 'mp4':
+        return 'video/mp4';
+      case 'mov':
+        return 'video/quicktime';
+      case '3gp':
+        return 'video/3gpp';
       default:
         return 'application/octet-stream';
     }
@@ -155,6 +166,66 @@ class ApiService {
       return json.decode(response.body);
     } else {
       throw Exception('Failed to mark intervention as rejected');
+    }
+  }
+  
+  // Get machines list
+  Future<List<Map<String, dynamic>>> getMachines() async {
+    final token = await _getToken();
+    final url = Uri.parse('$baseUrl/machines');
+
+    try {
+      final response = await http.get(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Accept': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(response.body);
+        return data.map((item) => Map<String, dynamic>.from(item)).toList();
+      } else {
+        throw Exception('Failed to load machines');
+      }
+    } catch (e) {
+      // Return mock data for development
+      return [
+        {'id': 'machine1', 'label': 'Machine 1', 'code': 'M001'},
+        {'id': 'machine2', 'label': 'Machine 2', 'code': 'M002'},
+        {'id': 'machine3', 'label': 'Machine 3', 'code': 'M003'},
+      ];
+    }
+  }
+  
+  // Download document
+  Future<File?> downloadDocument(String documentUrl, String fileName) async {
+    final token = await _getToken();
+    final url = Uri.parse(documentUrl);
+    
+    try {
+      final response = await http.get(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        // Get temporary directory
+        final tempDir = Directory.systemTemp;
+        final file = File('${tempDir.path}/$fileName');
+        
+        // Write file
+        await file.writeAsBytes(response.bodyBytes);
+        return file;
+      } else {
+        throw Exception('Failed to download document');
+      }
+    } catch (e) {
+      print('Error downloading document: $e');
+      return null;
     }
   }
 }
