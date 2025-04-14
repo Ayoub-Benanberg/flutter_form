@@ -1,3 +1,4 @@
+// lib/models/intervention_request.dart
 class InterventionRequest {
   final String machineId;
   final String machineStatusId;
@@ -28,7 +29,7 @@ class InterventionRequest {
       'risque_id': risqueId,
       'priority_id': priorityId,
       'referred_collaborateur_id': referredCollaborateurId,
-      'closed': closed,
+      'closed': closed ? 1 : 0, // Convert boolean to 1/0 for PHP
     };
   }
 }

@@ -6,18 +6,20 @@ import 'package:http_parser/http_parser.dart';
 import '../models/intervention_request.dart';
 
 class ApiService {
-  
-  final String baseUrl = 'https://your-backend-url.com/api';
+  // Update this with your actual backend URL
+  final String baseUrl = 'https://your-backend-api.com/api';
 
-  // Get authentication token
+  // Get authentication token - this should be updated with your actual auth logic
   Future<String> _getToken() async {
-    // Replace with authentication
+    // Implement your authentication logic here
+    // This could fetch from secure storage, login, etc.
     return 'your_auth_token';
   }
 
-  // Create intervention request with optional file upload
+  // Create intervention request with file uploads
   Future<dynamic> createInterventionRequest(
       InterventionRequest intervention, List<File> documents) async {
+
     final token = await _getToken();
     final url = Uri.parse('$baseUrl/operator/intervention-requests');
 
@@ -28,37 +30,44 @@ class ApiService {
     request.headers.addAll({
       'Authorization': 'Bearer $token',
       'Accept': 'application/json',
+      'Content-Type': 'multipart/form-data',
     });
 
-    // Add form fields
+    // Add form fields - ensure field names match the PHP controller expectations
     request.fields.addAll(intervention.toJson().map(
-          (key, value) => MapEntry(key, value.toString()),
-        ));
+          (key, value) => MapEntry(key, value?.toString() ?? ''),
+    ));
 
     // Add files if any
     if (documents.isNotEmpty) {
       for (var document in documents) {
         final fileName = document.path.split('/').last;
         final mimeType = _getMimeType(fileName);
-        
+
+        // Make sure the field name matches what the backend expects
         request.files.add(await http.MultipartFile.fromPath(
-          'documents[]',
+          'documents[]', // This matches your PHP controller
           document.path,
           contentType: MediaType.parse(mimeType),
         ));
       }
     }
 
-    // Send request
-    final response = await request.send();
-    final responseBody = await response.stream.bytesToString();
+    try {
+      // Send request
+      final response = await request.send();
+      final responseBody = await response.stream.bytesToString();
 
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      return json.decode(responseBody);
-    } else {
-      throw Exception('Failed to create intervention request: ${responseBody}');
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return json.decode(responseBody);
+      } else {
+        throw Exception('Failed to create intervention request: ${responseBody}');
+      }
+    } catch (e) {
+      throw Exception('Network error: ${e.toString()}');
     }
   }
+
 
   // Helper to determine MIME type from filename
   String _getMimeType(String fileName) {
@@ -170,6 +179,7 @@ class ApiService {
   }
   
   // Get machines list
+  // In ApiService
   Future<List<Map<String, dynamic>>> getMachines() async {
     final token = await _getToken();
     final url = Uri.parse('$baseUrl/machines');
@@ -190,7 +200,7 @@ class ApiService {
         throw Exception('Failed to load machines');
       }
     } catch (e) {
-      // Return mock data for development
+      // Return mock data for development/fallback
       return [
         {'id': 'machine1', 'label': 'Machine 1', 'code': 'M001'},
         {'id': 'machine2', 'label': 'Machine 2', 'code': 'M002'},
@@ -198,8 +208,37 @@ class ApiService {
       ];
     }
   }
+
+  Future<List<Map<String, dynamic>>> getProblemNatures() async {
+    final token = await _getToken();
+    final url = Uri.parse('$baseUrl/problem-natures');
+
+    try {
+      final response = await http.get(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Accept': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(response.body);
+        return data.map((item) => Map<String, dynamic>.from(item)).toList();
+      } else {
+        throw Exception('Failed to load problem natures');
+      }
+    } catch (e) {
+      // Fallback mock data
+      return [
+        {'id': 'nature1', 'nature': 'Gamme 1'},
+        {'id': 'nature2', 'nature': 'Gamme 2'},
+        {'id': 'nature3', 'nature': 'Gamme 3'},
+      ];
+    }
+  }
   
-  // Download document
+  // Download= document
   Future<File?> downloadDocument(String documentUrl, String fileName) async {
     final token = await _getToken();
     final url = Uri.parse(documentUrl);

@@ -100,24 +100,21 @@ class _CombinedInterventionFormState extends State<CombinedInterventionForm> {
     super.dispose();
   }
 
+
   Future<void> _loadFormData() async {
     setState(() {
       isLoading = true;
     });
 
     try {
-      // For development purposes, let's create mock data
-      machines = [
-        {'id': 'machine1', 'label': 'Machine 1', 'code': 'M001'},
-        {'id': 'machine2', 'label': 'Machine 2', 'code': 'M002'},
-        {'id': 'machine3', 'label': 'Machine 3', 'code': 'M003'},
-      ];
+      // Load real data from API
+      final apiService = ApiService();
 
-      probNatures = [
-        {'id': 'nature1', 'nature': 'Gamme 1'},
-        {'id': 'nature2', 'nature': 'Gamme 2'},
-        {'id': 'nature3', 'nature': 'Gamme 3'},
-      ];
+      // Load machines
+      machines = await apiService.getMachines();
+
+      // Load problem natures
+      probNatures = await apiService.getProblemNatures();
 
       setState(() {
         isLoading = false;
